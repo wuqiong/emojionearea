@@ -18,7 +18,9 @@ function(emojione, uniRegexp, readyCallbacks, emojioneSupportMode, cdn, getEmoji
             if (!emojione || getSupportMode(detectVersion(emojione)) < 2) {
                 cdn.isLoading = true;
                 var emojioneJsCdnUrlBase;
-                if (getSupportMode(emojioneVersion) > 5) {
+                if (getSupportMode(emojioneVersion) > 6) {
+                    emojioneJsCdnUrlBase = cdn.defaultBase4 + "emojione/" + emojioneVersion;
+                } else if (getSupportMode(emojioneVersion) > 5) {
                     emojioneJsCdnUrlBase = cdn.defaultBase3 + "npm/emojione@" + emojioneVersion;
                 } else if (getSupportMode(emojioneVersion) > 4) {
                     emojioneJsCdnUrlBase = cdn.defaultBase3 + "emojione/" + emojioneVersion;

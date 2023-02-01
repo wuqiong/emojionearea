@@ -3,7 +3,7 @@
  * https://github.com/mervick/emojionearea
  * Copyright Andrey Izman and other contributors
  * Released under the MIT license
- * Date: 2018-04-27T09:03Z
+ * Date: 2023-02-01T09:01Z
  */
 window = ( typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {} );
 document = window.document || {};
@@ -178,7 +178,8 @@ document = window.document || {};
             case '3.1.1':
             case '3.1.2':
             case '3.1':
-            default: return 6;
+            case '4.0': return 6;
+            default: return 7;
         }
     };
     function getDefaultOptions () {
@@ -653,6 +654,7 @@ document = window.document || {};
             if (sel && sel.rangeCount > 0) {
                 return sel.getRangeAt(0);
             }
+            return null;
         };
 
         restoreSelection = function(el, sel) {
@@ -672,7 +674,7 @@ document = window.document || {};
         restoreSelection = function(el, sel) {
             var textRange = document.body.createTextRange();
             textRange.moveToElementText(el);
-            textRange.setStart(sel.startContanier, sel.startOffset);
+            textRange.setStart(sel.startContainer, sel.startOffset);
             textRange.setEnd(sel.endContainer, sel.endOffset);
             textRange.select();
         };
@@ -879,8 +881,8 @@ document = window.document || {};
         self.shortnames = options.shortnames;
         self.saveEmojisAs = options.saveEmojisAs;
         self.standalone = options.standalone;
-        self.emojiTemplate = '<img alt="{alt}" class="emojione' + (self.sprite ? '-{uni}" src="' + blankImg + '"/>' : 'emoji" src="{img}"/>');
-        self.emojiTemplateAlt = self.sprite ? '<i class="emojione-{uni}"/>' : '<img class="emojioneemoji" src="{img}"/>';
+        self.emojiTemplate = '<img alt="{alt}" class="emojione' + (self.sprite ? '-{uni}" src="' + blankImg + '"/>' : 'emoji" src="{img}" crossorigin/>');
+        self.emojiTemplateAlt = self.sprite ? '<i class="emojione-{uni}"/>' : '<img class="emojioneemoji" src="{img}" crossorigin/>';
         self.emojiBtnTemplate = '<i class="emojibtn" role="button" data-name="{name}" title="{friendlyName}">' + self.emojiTemplateAlt + '</i>';
         self.recentEmojis = options.recentEmojis && supportsLocalStorage();
 
@@ -1013,7 +1015,7 @@ document = window.document || {};
                 items = shortnameTo(items,
                     self.sprite ?
                         '<i class="emojibtn" role="button" data-name="{name}" title="{friendlyName}"><i class="emojione-{uni}"></i></i>' :
-                        '<i class="emojibtn" role="button" data-name="{name}" title="{friendlyName}"><img class="emojioneemoji lazy-emoji" data-src="{img}"/></i>',
+                        '<i class="emojibtn" role="button" data-name="{name}" title="{friendlyName}"><img class="emojioneemoji lazy-emoji" data-src="{img}" crossorigin/></i>',
                     true).split('|').join('');
 
                 category.html(items);
@@ -1483,7 +1485,8 @@ document = window.document || {};
     };
     var cdn = {
         defaultBase: "https://cdnjs.cloudflare.com/ajax/libs/emojione/",
-        defaultBase3: "https://cdn.jsdelivr.net/",
+        defaultBase3: "https://fastly.jsdelivr.net/",
+        defaultBase4: "https://cdn.bootcdn.net/ajax/libs/",
         base: null,
         isLoading: false
     };
@@ -1495,7 +1498,9 @@ document = window.document || {};
             if (!emojione || getSupportMode(detectVersion(emojione)) < 2) {
                 cdn.isLoading = true;
                 var emojioneJsCdnUrlBase;
-                if (getSupportMode(emojioneVersion) > 5) {
+                if (getSupportMode(emojioneVersion) > 6) {
+                    emojioneJsCdnUrlBase = cdn.defaultBase4 + "emojione/" + emojioneVersion;
+                } else if (getSupportMode(emojioneVersion) > 5) {
                     emojioneJsCdnUrlBase = cdn.defaultBase3 + "npm/emojione@" + emojioneVersion;
                 } else if (getSupportMode(emojioneVersion) > 4) {
                     emojioneJsCdnUrlBase = cdn.defaultBase3 + "emojione/" + emojioneVersion;
@@ -1723,7 +1728,7 @@ document = window.document || {};
 
         var self = this, pseudoSelf = {
             shortnames: (options && typeof options.shortnames !== 'undefined' ? options.shortnames : true),
-            emojiTemplate: '<img alt="{alt}" class="emojione' + (options && options.sprite && emojioneSupportMode < 3 ? '-{uni}" src="' + blankImg : 'emoji" src="{img}') + '"/>'
+            emojiTemplate: '<img alt="{alt}" class="emojione' + (options && options.sprite && emojioneSupportMode < 3 ? '-{uni}" src="' + blankImg : 'emoji" src="{img}') + '" crossorigin />'
         };
 
         loadEmojione(options);
